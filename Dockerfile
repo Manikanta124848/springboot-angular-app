@@ -1,14 +1,24 @@
-# Use OpenJDK 17 slim image
-FROM openjdk:17-jdk-slim
+# Use Gradle + JDK 17 for building
+FROM gradle:8.3-jdk17 AS build
 
-# Set working directory inside the container
 WORKDIR /app
 
-# Copy the built JAR into the container
-COPY build/libs/realestate-app.jar app.jar
+# Copy project files
+COPY . .
 
-# Expose Spring Boot default port
+# Build the Spring Boot JAR (skip tests to speed up)
+RUN gradle bootJar -x test
+
+# Use a lightweight JDK for running
+FROM openjdk:17-jdk-slim
+
+WORKDIR /app
+
+# Copy the built JAR from the builder stage
+COPY --from=build /app/build/libs/realestate-app.jar app.jar
+
+# Expose port 8080
 EXPOSE 8080
 
-# Run the Spring Boot application
+# Run the Spring Boot app
 ENTRYPOINT ["java", "-jar", "app.jar"]
