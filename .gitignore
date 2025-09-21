@@ -1,0 +1,18 @@
+# Gradle
+.gradle/
+build/
+
+# IDE
+*.iml
+.idea/
+.vscode/
+*.class
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node (if Angular src is included)
+node_modules/
+dist/
